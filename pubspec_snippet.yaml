@@ -1,0 +1,17 @@
+# Salin bagian ini ke pubspec.yaml project Flutter Anda (gabungkan dengan bagian
+# "flutter:" yang sudah ada). Tidak ada dependency pihak ketiga yang dibutuhkan.
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  # Aktifkan blok fonts HANYA setelah file font benar-benar ada di folder
+  # assets/fonts/, kalau tidak build akan gagal. Contoh font gratis (OFL):
+  # Anton-Regular.ttf dari https://fonts.google.com/specimen/Anton
+  #
+  # fonts:
+  #   - family: NTCDisplay
+  #     fonts:
+  #       - asset: assets/fonts/Anton-Regular.ttf
