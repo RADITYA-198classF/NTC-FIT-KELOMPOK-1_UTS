@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_text_styles.dart';
 
-/// Swoosh gambar vektor sederhana (pendekatan bentuk). Untuk hasil persis,
-/// ganti dengan logo yang Anda berhak pakai (SVG/PNG) lewat assets.
 class NikeSwoosh extends StatelessWidget {
   const NikeSwoosh({super.key, this.width = 62, this.color = AppColors.black});
 
@@ -22,7 +20,7 @@ class NikeSwoosh extends StatelessWidget {
 }
 
 class _SwooshPainter extends CustomPainter {
-  _SwooshPainter(this.color);
+  const _SwooshPainter(this.color);
 
   final Color color;
 
@@ -30,6 +28,7 @@ class _SwooshPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double w = size.width;
     final double h = size.height;
+
     final Path path = Path()
       ..moveTo(w, 0)
       ..cubicTo(w * 0.72, h * 0.40, w * 0.45, h * 0.78, w * 0.28, h * 0.92)
@@ -37,6 +36,7 @@ class _SwooshPainter extends CustomPainter {
       ..cubicTo(w * 0.00, h * 0.56, w * 0.06, h * 0.44, w * 0.13, h * 0.34)
       ..cubicTo(w * 0.33, h * 0.64, w * 0.62, h * 0.40, w, 0)
       ..close();
+
     canvas.drawPath(
       path,
       Paint()
@@ -47,30 +47,18 @@ class _SwooshPainter extends CustomPainter {
   }
 
   @override
-<<<<<<< HEAD
-  bool shouldRepaint(covariant _SwooshPainter oldDelegate) =>
-      oldDelegate.color != color;
-=======
-  bool shouldRepaint(covariant _SwooshPainter oldDelegate) => oldDelegate.color != color;
->>>>>>> origin/main
+  bool shouldRepaint(covariant _SwooshPainter oldDelegate) {
+    return oldDelegate.color != color;
+  }
 }
-
-/// Logo "NTC" untuk Splash. Memakai assets/images/ntc_logo.png bila ada,
-/// jika tidak memakai swoosh + teks "NTC".
-<<<<<<< HEAD
 
 class NtcLogo extends StatelessWidget {
   const NtcLogo({super.key, this.width = 120});
-=======
-class NtcLogo extends StatelessWidget {
-  const NtcLogo({super.key, this.width = 84});
->>>>>>> origin/main
 
   final double width;
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return SizedBox(
       width: width,
       child: Column(
@@ -84,8 +72,6 @@ class NtcLogo extends StatelessWidget {
             child: Text(
               'NTC',
               maxLines: 1,
-              softWrap: false,
-              textAlign: TextAlign.center,
               style: AppTextStyles.display.copyWith(
                 color: AppColors.black,
                 fontSize: 44,
@@ -95,31 +81,6 @@ class NtcLogo extends StatelessWidget {
           ),
         ],
       ),
-=======
-    return Image.asset(
-      'assets/images/ntc_logo.png',
-      width: width,
-      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-        return SizedBox(
-          width: width,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              NikeSwoosh(width: width),
-              const SizedBox(height: 8),
-              Text(
-                'NTC',
-                style: AppTextStyles.display.copyWith(
-                  color: AppColors.black,
-                  fontSize: 54,
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
->>>>>>> origin/main
     );
   }
 }
