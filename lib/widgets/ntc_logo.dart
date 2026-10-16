@@ -47,20 +47,30 @@ class _SwooshPainter extends CustomPainter {
   }
 
   @override
+<<<<<<< HEAD
   bool shouldRepaint(covariant _SwooshPainter oldDelegate) =>
       oldDelegate.color != color;
+=======
+  bool shouldRepaint(covariant _SwooshPainter oldDelegate) => oldDelegate.color != color;
+>>>>>>> origin/main
 }
 
 /// Logo "NTC" untuk Splash. Memakai assets/images/ntc_logo.png bila ada,
 /// jika tidak memakai swoosh + teks "NTC".
+<<<<<<< HEAD
 
 class NtcLogo extends StatelessWidget {
   const NtcLogo({super.key, this.width = 120});
+=======
+class NtcLogo extends StatelessWidget {
+  const NtcLogo({super.key, this.width = 84});
+>>>>>>> origin/main
 
   final double width;
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return SizedBox(
       width: width,
       child: Column(
@@ -85,6 +95,31 @@ class NtcLogo extends StatelessWidget {
           ),
         ],
       ),
+=======
+    return Image.asset(
+      'assets/images/ntc_logo.png',
+      width: width,
+      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+        return SizedBox(
+          width: width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              NikeSwoosh(width: width),
+              const SizedBox(height: 8),
+              Text(
+                'NTC',
+                style: AppTextStyles.display.copyWith(
+                  color: AppColors.black,
+                  fontSize: 54,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+>>>>>>> origin/main
     );
   }
 }
