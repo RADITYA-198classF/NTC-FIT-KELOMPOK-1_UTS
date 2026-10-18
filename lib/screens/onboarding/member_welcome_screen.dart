@@ -32,7 +32,11 @@ class MemberWelcomeScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.webBorder, width: 1.5),
                   ),
-                  child: const Icon(Icons.person_outline, size: 40, color: AppColors.webBorder),
+                  child: const Icon(
+                    Icons.person_outline,
+                    size: 40,
+                    color: AppColors.webBorder,
+                  ),
                 ),
                 const SizedBox(height: 22),
                 Text(
@@ -51,7 +55,8 @@ class MemberWelcomeScreen extends StatelessWidget {
                     label: 'Memulai',
                     height: 58,
                     elevated: true,
-                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.gender),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(AppRoutes.gender),
                   ),
                 ),
               ],

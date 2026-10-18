@@ -13,7 +13,6 @@ const List<String> _frequencyTitles = <String>[
   '2-4 Latihan',
   '5+ Latihan',
 ];
-
 const List<String> _frequencySubtitles = <String>[
   'Saya belum terlatih',
   'Saya rutin berlatih',
@@ -25,29 +24,24 @@ extension WeeklyFrequencyText on WeeklyFrequency {
   String get subtitle => _frequencySubtitles[index];
 }
 
-/// Satu gerakan dalam sebuah latihan. Berbasis repetisi (stopwatch naik,
-/// pengguna menekan "Selesai") atau berbasis waktu (hitung mundur otomatis).
 class Exercise {
-  const Exercise(
-    this.name, {
-    this.reps,
-    this.seconds,
-    required this.cue,
-  }) : assert(reps != null || seconds != null);
-
+  const Exercise(this.name, {this.reps, this.seconds, required this.cue})
+    : assert(reps != null || seconds != null);
   final String name;
   final int? reps;
   final int? seconds;
-
-  /// Petunjuk singkat cara melakukan gerakan.
   final String cue;
-
   bool get isTimed => reps == null && seconds != null;
-
   String get target => reps != null ? '$reps repetisi' : '$seconds dtk';
+
+  factory Exercise.fromJson(Map<String, dynamic> json) => Exercise(
+    json['name'] as String,
+    reps: json['reps'] == null ? null : (json['reps'] as num).toInt(),
+    seconds: json['seconds'] == null ? null : (json['seconds'] as num).toInt(),
+    cue: json['cue'] as String? ?? '',
+  );
 }
 
-/// Catatan satu sesi latihan yang selesai (tampil di Aktivitas > Riwayat).
 class WorkoutRecord {
   const WorkoutRecord({
     required this.workoutId,
@@ -56,12 +50,21 @@ class WorkoutRecord {
     required this.seconds,
     required this.exerciseCount,
   });
-
   final String workoutId;
   final String title;
   final DateTime completedAt;
   final int seconds;
   final int exerciseCount;
+
+  factory WorkoutRecord.fromJson(Map<String, dynamic> json) => WorkoutRecord(
+    workoutId: json['workout_id'] as String,
+    title: json['title'] as String,
+    completedAt: DateTime.parse(
+      (json['completed_at'] as String).replaceFirst(' ', 'T'),
+    ),
+    seconds: (json['seconds'] as num).toInt(),
+    exerciseCount: (json['exercise_count'] as num).toInt(),
+  );
 }
 
 class Workout {
@@ -78,7 +81,6 @@ class Workout {
     this.isNew = false,
     this.categories = const <String>[],
   });
-
   final String id;
   final String title;
   final String level;
@@ -89,12 +91,27 @@ class Workout {
   final bool isNew;
   final String description;
   final List<Exercise> exercises;
-
-  /// Nama kategori (HIIT, Kekuatan, Yoga, Siap untuk Gym, Pilates).
   final List<String> categories;
-
   String get meta => '$level · $equipment · $focus';
   String get duration => '$minutes mnt';
+
+  factory Workout.fromJson(Map<String, dynamic> json) => Workout(
+    id: json['id'] as String,
+    title: json['title'] as String,
+    level: json['level'] as String,
+    equipment: json['equipment'] as String,
+    focus: json['focus'] as String,
+    minutes: (json['minutes'] as num).toInt(),
+    image: json['image'] as String,
+    description: json['description'] as String? ?? '',
+    isNew: json['is_new'] == true || json['is_new'] == 1,
+    categories: (json['categories'] as List<dynamic>? ?? const [])
+        .map((e) => e.toString())
+        .toList(),
+    exercises: (json['exercises'] as List<dynamic>? ?? const [])
+        .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 class WorkoutCategory {
@@ -103,7 +120,6 @@ class WorkoutCategory {
     required this.image,
     required this.fallbackColor,
   });
-
   final String name;
   final String image;
   final Color fallbackColor;
@@ -116,7 +132,6 @@ class TrainingProgram {
     required this.meta,
     required this.image,
   });
-
   final String title;
   final String description;
   final String meta;
@@ -129,7 +144,6 @@ class HeroSlide {
     required this.headline,
     required this.image,
   });
-
   final String label;
   final String headline;
   final String image;
@@ -143,7 +157,6 @@ class Trophy {
     required this.icon,
     this.shape = TrophyShape.circle,
   });
-
   final String name;
   final IconData icon;
   final TrophyShape shape;

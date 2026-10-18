@@ -24,7 +24,8 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> with SingleTickerProviderStateMixin {
+class _MainShellState extends State<MainShell>
+    with SingleTickerProviderStateMixin {
   static const List<String> _titles = <String>[
     'Latihan',
     'Program',
@@ -97,8 +98,14 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
               indicatorWeight: 2,
               labelColor: AppColors.textPrimary,
               unselectedLabelColor: AppColors.iconInactive,
-              labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              unselectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              labelStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
               tabs: const <Widget>[
                 Tab(text: 'Riwayat'),
                 Tab(text: 'Prestasi'),

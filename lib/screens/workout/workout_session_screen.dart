@@ -116,7 +116,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
     );
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => WorkoutSummaryScreen(workout: workout, seconds: total),
+        builder: (BuildContext context) =>
+            WorkoutSummaryScreen(workout: workout, seconds: total),
       ),
     );
   }
@@ -133,11 +134,17 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Lanjutkan', style: TextStyle(color: AppColors.textPrimary)),
+              child: const Text(
+                'Lanjutkan',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Keluar', style: TextStyle(color: AppColors.textPrimary)),
+              child: const Text(
+                'Keluar',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
             ),
           ],
         );
@@ -175,7 +182,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
               height: 3,
               margin: const EdgeInsets.symmetric(horizontal: 1.5),
               decoration: BoxDecoration(
-                color: (i < _index || (i == _index && _phase == _Phase.exercise))
+                color:
+                    (i < _index || (i == _index && _phase == _Phase.exercise))
                     ? AppColors.white
                     : AppColors.white35,
                 borderRadius: BorderRadius.circular(2),
@@ -194,7 +202,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Text(
-          resting ? restTitle : 'Gerakan ${_index + 1} dari ${_exercises.length}',
+          resting
+              ? restTitle
+              : 'Gerakan ${_index + 1} dari ${_exercises.length}',
           style: const TextStyle(fontSize: 16, color: AppColors.white60),
         ),
         const SizedBox(height: 10),
@@ -223,7 +233,11 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
           textAlign: TextAlign.center,
           maxLines: 4,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 16, height: 1.4, color: AppColors.white60),
+          style: const TextStyle(
+            fontSize: 16,
+            height: 1.4,
+            color: AppColors.white60,
+          ),
         ),
         const SizedBox(height: 36),
         Text(
@@ -235,8 +249,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
           _paused
               ? 'Dijeda'
               : resting
-                  ? 'Hitung mundur'
-                  : (_exercise.isTimed ? 'Sisa waktu' : 'Waktu gerakan'),
+              ? 'Hitung mundur'
+              : (_exercise.isTimed ? 'Sisa waktu' : 'Waktu gerakan'),
           style: const TextStyle(fontSize: 14, color: AppColors.white60),
         ),
       ],
@@ -272,8 +286,14 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                         children: <Widget>[
                           IconButton(
                             padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                            icon: const Icon(Icons.close, color: AppColors.white),
+                            constraints: const BoxConstraints(
+                              minWidth: 40,
+                              minHeight: 40,
+                            ),
+                            icon: const Icon(
+                              Icons.close,
+                              color: AppColors.white,
+                            ),
                             onPressed: _confirmExit,
                           ),
                           const SizedBox(width: 8),
@@ -290,7 +310,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                           Material(
                             color: Colors.transparent,
                             shape: const CircleBorder(
-                              side: BorderSide(color: AppColors.white, width: 1),
+                              side: BorderSide(
+                                color: AppColors.white,
+                                width: 1,
+                              ),
                             ),
                             child: InkWell(
                               customBorder: const CircleBorder(),

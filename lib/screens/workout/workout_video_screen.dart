@@ -67,63 +67,75 @@ class _WorkoutVideoScreenState extends State<WorkoutVideoScreen> {
                     textAlign: TextAlign.center,
                   )
                 : !_controller.value.isInitialized
-                    ? const CircularProgressIndicator(color: AppColors.black)
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
+                ? const CircularProgressIndicator(color: AppColors.black)
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
                         children: <Widget>[
-                          AspectRatio(
-                            aspectRatio: _controller.value.aspectRatio,
-                            child: VideoPlayer(_controller),
+                          IconButton.filled(
+                            onPressed: () {
+                              setState(() {
+                                if (_controller.value.isPlaying) {
+                                  _controller.pause();
+                                } else {
+                                  if (_controller.value.position >=
+                                      _controller.value.duration) {
+                                    _controller.seekTo(Duration.zero);
+                                  }
+                                  _controller.play();
+                                }
+                              });
+                            },
+                            icon: Icon(
+                              _controller.value.isPlaying
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                            ),
+                            style: IconButton.styleFrom(
+                              backgroundColor: AppColors.black,
+                              foregroundColor: AppColors.white,
+                            ),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: <Widget>[
-                              IconButton.filled(
-                                onPressed: () {
-                                  setState(() {
-                                    if (_controller.value.isPlaying) {
-                                      _controller.pause();
-                                    } else {
-                                      if (_controller.value.position >= _controller.value.duration) {
-                                        _controller.seekTo(Duration.zero);
-                                      }
-                                      _controller.play();
-                                    }
-                                  });
-                                },
-                                icon: Icon(
-                                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                                ),
-                                style: IconButton.styleFrom(
-                                  backgroundColor: AppColors.black,
-                                  foregroundColor: AppColors.white,
-                                ),
+                          Expanded(
+                            child: VideoProgressIndicator(
+                              _controller,
+                              allowScrubbing: true,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
                               ),
-                              Expanded(
-                                child: VideoProgressIndicator(
-                                  _controller,
-                                  allowScrubbing: true,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                  colors: const VideoProgressColors(
-                                    playedColor: AppColors.black,
-                                    bufferedColor: AppColors.outline,
-                                    backgroundColor: AppColors.divider,
-                                  ),
-                                ),
+                              colors: const VideoProgressColors(
+                                playedColor: AppColors.black,
+                                bufferedColor: AppColors.outline,
+                                backgroundColor: AppColors.divider,
                               ),
-                              Text(
-                                '${_time(_controller.value.position)} / ${_time(_controller.value.duration)}',
-                                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                              ),
-                            ],
+                            ),
                           ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Video demonstrasi latihan',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          Text(
+                            '${_time(_controller.value.position)} / ${_time(_controller.value.duration)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Video demonstrasi latihan',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),

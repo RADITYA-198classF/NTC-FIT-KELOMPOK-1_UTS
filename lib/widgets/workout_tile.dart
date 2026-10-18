@@ -23,11 +23,13 @@ class WorkoutTile extends StatelessWidget {
       builder: (BuildContext context, Set<String> saved, Widget? _) {
         final bool isSaved = saved.contains(workout.id);
         return InkWell(
-          onTap: onTap ??
+          onTap:
+              onTap ??
               () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => WorkoutDetailScreen(workout: workout),
+                    builder: (BuildContext context) =>
+                        WorkoutDetailScreen(workout: workout),
                   ),
                 );
               },
@@ -44,9 +46,16 @@ class WorkoutTile extends StatelessWidget {
                     child: Stack(
                       fit: StackFit.expand,
                       children: <Widget>[
-                        AppImage(workout.image, fallbackColor: const Color(0xFF4A4A4A)),
+                        AppImage(
+                          workout.image,
+                          fallbackColor: const Color(0xFF4A4A4A),
+                        ),
                         if (workout.isNew)
-                          const Positioned(left: 4, bottom: 4, child: _NewBadge()),
+                          const Positioned(
+                            left: 4,
+                            bottom: 4,
+                            child: _NewBadge(),
+                          ),
                       ],
                     ),
                   ),
@@ -65,7 +74,10 @@ class WorkoutTile extends StatelessWidget {
                 ),
                 IconButton(
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
                   splashRadius: 20,
                   icon: Icon(
                     isSaved ? Icons.bookmark : Icons.bookmark_border,
@@ -118,7 +130,11 @@ class NewTag extends StatelessWidget {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(4),
         boxShadow: const <BoxShadow>[
-          BoxShadow(color: Color(0x33000000), blurRadius: 4, offset: Offset(0, 1)),
+          BoxShadow(
+            color: Color(0x33000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
         ],
       ),
       child: const Text(

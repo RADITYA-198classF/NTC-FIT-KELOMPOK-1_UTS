@@ -72,7 +72,8 @@ class _HistoryList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final WorkoutRecord r = records[index];
         final DateTime d = r.completedAt;
-        final String date = '${d.day} ${indonesianMonths[d.month - 1]} ${d.year}';
+        final String date =
+            '${d.day} ${indonesianMonths[d.month - 1]} ${d.year}';
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 14),
           child: Row(
@@ -81,8 +82,15 @@ class _HistoryList extends StatelessWidget {
               Container(
                 width: 36,
                 height: 36,
-                decoration: const BoxDecoration(color: AppColors.card, shape: BoxShape.circle),
-                child: const Icon(Icons.check, size: 20, color: AppColors.textPrimary),
+                decoration: const BoxDecoration(
+                  color: AppColors.card,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  size: 20,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -126,7 +134,11 @@ class _HistoryEmpty extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: <Color>[AppColors.black20, AppColors.black60, AppColors.black90],
+              colors: <Color>[
+                AppColors.black20,
+                AppColors.black60,
+                AppColors.black90,
+              ],
               stops: <double>[0.0, 0.5, 1.0],
             ),
           ),
@@ -200,7 +212,11 @@ class _AchievementsTab extends StatelessWidget {
                     const Text(
                       'Anda berhasil, rayakan sekarang. Dengan latihan, kini Anda bisa mendapatkan trofi, penghargaan, dan streak.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, height: 1.3, color: AppColors.white),
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.3,
+                        color: AppColors.white,
+                      ),
                     ),
                     const SizedBox(height: 28),
                     PillButton(

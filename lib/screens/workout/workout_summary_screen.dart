@@ -28,7 +28,8 @@ class WorkoutSummaryScreen extends StatelessWidget {
 
   void _done(BuildContext context) {
     Navigator.of(context).popUntil(
-      (Route<dynamic> route) => route.settings.name == AppRoutes.main || route.isFirst,
+      (Route<dynamic> route) =>
+          route.settings.name == AppRoutes.main || route.isFirst,
     );
   }
 
@@ -67,7 +68,10 @@ class WorkoutSummaryScreen extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       _Stat(label: 'Waktu total', value: _format(seconds)),
-                      _Stat(label: 'Gerakan', value: '${workout.exercises.length}'),
+                      _Stat(
+                        label: 'Gerakan',
+                        value: '${workout.exercises.length}',
+                      ),
                     ],
                   ),
                   const Spacer(),
@@ -102,7 +106,10 @@ class _Stat extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(label, style: const TextStyle(fontSize: 14, color: AppColors.white60)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, color: AppColors.white60),
+          ),
           const SizedBox(height: 4),
           Text(
             value,

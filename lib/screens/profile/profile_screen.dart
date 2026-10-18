@@ -24,7 +24,11 @@ class ProfileScreen extends StatelessWidget {
         ),
         title: const Text(
           'Profil',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400, color: AppColors.textPrimary),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textPrimary,
+          ),
         ),
       ),
       body: ListView(
@@ -39,14 +43,21 @@ class ProfileScreen extends StatelessWidget {
                 color: AppColors.avatar,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.photo_camera_outlined, size: 38, color: Color(0xFFF2F2F2)),
+              child: const Icon(
+                Icons.photo_camera_outlined,
+                size: 38,
+                color: Color(0xFFF2F2F2),
+              ),
             ),
           ),
           const SizedBox(height: 16),
           Center(
             child: Text(
               session.fullName,
-              style: const TextStyle(fontSize: 20, color: AppColors.textPrimary),
+              style: const TextStyle(
+                fontSize: 20,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
           const SizedBox(height: 20),
@@ -121,7 +132,10 @@ class ProfileScreen extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               memberSince,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],

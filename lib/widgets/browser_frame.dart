@@ -37,7 +37,10 @@ class BrowserFrame extends StatelessWidget {
                         onPressed: onClose,
                       ),
                       IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.white),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColors.white,
+                        ),
                         onPressed: () {},
                       ),
                       const Expanded(
@@ -47,16 +50,26 @@ class BrowserFrame extends StatelessWidget {
                             AppConfig.authHostLabel,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: AppColors.white, fontSize: 16),
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.share, color: AppColors.white, size: 22),
+                        icon: const Icon(
+                          Icons.share,
+                          color: AppColors.white,
+                          size: 22,
+                        ),
                         onPressed: () {},
                       ),
                       IconButton(
-                        icon: const Icon(Icons.more_vert, color: AppColors.white),
+                        icon: const Icon(
+                          Icons.more_vert,
+                          color: AppColors.white,
+                        ),
                         onPressed: () {},
                       ),
                     ],
@@ -64,9 +77,7 @@ class BrowserFrame extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: SafeArea(top: false, child: child),
-            ),
+            Expanded(child: SafeArea(top: false, child: child)),
           ],
         ),
       ),
