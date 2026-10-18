@@ -108,7 +108,8 @@ const Exercise _benchPress = Exercise(
 const Exercise _latPulldown = Exercise(
   'Lat Pulldown',
   reps: 10,
-  cue: 'Tarik batang ke arah dada atas dengan menurunkan siku ke samping tubuh.',
+  cue:
+      'Tarik batang ke arah dada atas dengan menurunkan siku ke samping tubuh.',
 );
 const Exercise _legPress = Exercise(
   'Leg Press',
@@ -119,12 +120,14 @@ const Exercise _legPress = Exercise(
 const Exercise _plank40 = Exercise(
   'Plank',
   seconds: 40,
-  cue: 'Tumpu pada lengan bawah, jaga tubuh lurus, kencangkan perut dan bokong.',
+  cue:
+      'Tumpu pada lengan bawah, jaga tubuh lurus, kencangkan perut dan bokong.',
 );
 const Exercise _plank30 = Exercise(
   'Plank',
   seconds: 30,
-  cue: 'Tumpu pada lengan bawah, jaga tubuh lurus, kencangkan perut dan bokong.',
+  cue:
+      'Tumpu pada lengan bawah, jaga tubuh lurus, kencangkan perut dan bokong.',
 );
 const Exercise _mountainClimber = Exercise(
   'Mountain Climber',
@@ -198,8 +201,7 @@ const List<Workout> dummyHybridWorkouts = <Workout>[
     image: 'assets/images/barbell_deadlift.jpg',
     isNew: true,
     categories: <String>['Kekuatan', 'Siap untuk Gym', 'HIIT'],
-    description:
-        'Kombinasi latihan kekuatan dan kondisi fisik yang dirancang untuk mempersiapkan tubuh Anda menghadapi lomba hybrid. Mulai dengan mobilitas, lanjut ke gerakan beban utama, dan tutup dengan penahanan inti serta pendinginan.',
+    description: 'Kombinasi latihan kekuatan dan kondisi fisik yang dirancang untuk mempersiapkan tubuh Anda menghadapi lomba hybrid. Mulai dengan mobilitas, lanjut ke gerakan beban utama, dan tutup dengan penahanan inti serta pendinginan.',
     exercises: <Exercise>[
       _catCow,
       _quadRocker,
@@ -222,8 +224,7 @@ const List<Workout> dummyHybridWorkouts = <Workout>[
     minutes: 20,
     image: 'assets/images/hybrid_floor_workout.jpg',
     categories: <String>['Kekuatan', 'HIIT'],
-    description:
-        'Sirkuit singkat dan padat untuk membangun daya tahan dan kekuatan inti. Gerakan berbasis waktu menjaga detak jantung Anda tetap tinggi.',
+    description: 'Sirkuit singkat dan padat untuk membangun daya tahan dan kekuatan inti. Gerakan berbasis waktu menjaga detak jantung Anda tetap tinggi.',
     exercises: <Exercise>[
       _jumpingJack,
       _highKnees,
@@ -242,8 +243,7 @@ const List<Workout> dummyHybridWorkouts = <Workout>[
     minutes: 30,
     image: 'assets/images/dumbbell_squat.jpg',
     categories: <String>['Kekuatan', 'Siap untuk Gym'],
-    description:
-        'Latihan seluruh tubuh dengan beban untuk membentuk otot sekaligus meningkatkan kekuatan. Fokus pada teknik yang rapi di setiap repetisi.',
+    description: 'Latihan seluruh tubuh dengan beban untuk membentuk otot sekaligus meningkatkan kekuatan. Fokus pada teknik yang rapi di setiap repetisi.',
     exercises: <Exercise>[
       _catCow,
       _gobletSquat,
@@ -266,8 +266,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 25,
     image: 'assets/images/hiit_red_training.jpg',
     categories: <String>['HIIT'],
-    description:
-        'Interval intensitas tinggi tanpa peralatan untuk membakar kalori dan meningkatkan kebugaran jantung.',
+    description: 'Interval intensitas tinggi tanpa peralatan untuk membakar kalori dan meningkatkan kebugaran jantung.',
     exercises: <Exercise>[
       _jumpingJack,
       _squatJump,
@@ -286,8 +285,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 30,
     image: 'assets/images/plank_pose.jpg',
     categories: <String>['Yoga'],
-    description:
-        'Alur yoga lembut untuk melepas ketegangan otot dan membantu pemulihan setelah hari yang aktif.',
+    description: 'Alur yoga lembut untuk melepas ketegangan otot dan membantu pemulihan setelah hari yang aktif.',
     exercises: <Exercise>[
       _catCow,
       _downwardDog,
@@ -306,8 +304,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 20,
     image: 'assets/images/core_plank.jpg',
     categories: <String>['Pilates'],
-    description:
-        'Latihan Pilates di matras untuk menguatkan otot inti dan memperbaiki postur tubuh.',
+    description: 'Latihan Pilates di matras untuk menguatkan otot inti dan memperbaiki postur tubuh.',
     exercises: <Exercise>[
       _hundred,
       _rollUp,
@@ -326,8 +323,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 40,
     image: 'assets/images/metcon_barbell.jpg',
     categories: <String>['Siap untuk Gym', 'Kekuatan'],
-    description:
-        'Pengenalan gerakan dasar dengan barbel dan mesin agar Anda percaya diri saat memulai latihan di gym.',
+    description: 'Pengenalan gerakan dasar dengan barbel dan mesin agar Anda percaya diri saat memulai latihan di gym.',
     exercises: <Exercise>[
       _quadRocker,
       _barbellSquat,
@@ -346,8 +342,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 15,
     image: 'assets/images/kettlebell_squat.jpg',
     categories: <String>['HIIT', 'Kekuatan'],
-    description:
-        'Sirkuit cepat dengan dumbel yang memadukan gerakan kekuatan dan kardio dalam waktu singkat.',
+    description: 'Sirkuit cepat dengan dumbel yang memadukan gerakan kekuatan dan kardio dalam waktu singkat.',
     exercises: <Exercise>[
       _gobletSquat,
       _shoulderPress,
@@ -366,8 +361,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 20,
     image: 'assets/images/group_workout.jpg',
     categories: <String>['Yoga'],
-    description:
-        'Alur yoga singkat untuk membangunkan tubuh dan menenangkan pikiran sebelum memulai hari.',
+    description: 'Alur yoga singkat untuk membangunkan tubuh dan menenangkan pikiran sebelum memulai hari.',
     exercises: <Exercise>[
       _catCow,
       _sunSalutation,
@@ -385,8 +379,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 25,
     image: 'assets/images/running_lunge.jpg',
     categories: <String>['Yoga'],
-    description:
-        'Rangkaian peregangan untuk melepas kekakuan di pinggul dan punggung bawah.',
+    description: 'Rangkaian peregangan untuk melepas kekakuan di pinggul dan punggung bawah.',
     exercises: <Exercise>[
       _catCow,
       _quadRocker,
@@ -404,8 +397,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 30,
     image: 'assets/images/strength_dumbbell_row.webp',
     categories: <String>['Pilates'],
-    description:
-        'Latihan Pilates menyeluruh yang melatih kontrol, keseimbangan, dan kekuatan inti.',
+    description: 'Latihan Pilates menyeluruh yang melatih kontrol, keseimbangan, dan kekuatan inti.',
     exercises: <Exercise>[
       _hundred,
       _rollUp,
@@ -424,8 +416,7 @@ const List<Workout> _extraWorkouts = <Workout>[
     minutes: 20,
     image: 'assets/images/group_running.jpg',
     categories: <String>['Pilates'],
-    description:
-        'Fokus pada penguatan kaki dan bokong dengan gerakan terkendali yang ramah sendi.',
+    description: 'Fokus pada penguatan kaki dan bokong dengan gerakan terkendali yang ramah sendi.',
     exercises: <Exercise>[
       _gluteBridge,
       _sideLegLift,
@@ -474,7 +465,8 @@ const List<WorkoutCategory> dummyCategories = <WorkoutCategory>[
 const List<TrainingProgram> dummyPrograms = <TrainingProgram>[
   TrainingProgram(
     title: 'Awali Kebugaran dengan Gerakan Dasar',
-    description: 'Dasar yang Anda butuhkan untuk mendapatkan hasil yang Anda inginkan.',
+    description:
+        'Dasar yang Anda butuhkan untuk mendapatkan hasil yang Anda inginkan.',
     meta: '4 minggu, dumbel',
     image: 'assets/images/dumbbell_squat.jpg',
   ),

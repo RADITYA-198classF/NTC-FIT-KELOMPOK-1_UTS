@@ -1,0 +1,97 @@
+CREATE DATABASE IF NOT EXISTS ntc_fit_uts CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE ntc_fit_uts;
+
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS workout_history;
+DROP TABLE IF EXISTS saved_workouts;
+DROP TABLE IF EXISTS category_workout;
+DROP TABLE IF EXISTS exercises;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS workouts;
+DROP TABLE IF EXISTS verification_codes;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS=1;
+
+CREATE TABLE users (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(191) NOT NULL UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL DEFAULT '',
+    birth_date DATE NOT NULL,
+    marketing_opt_in TINYINT(1) NOT NULL DEFAULT 0,
+    gender ENUM('female','male') NULL,
+    weekly_frequency ENUM('low','medium','high') NULL,
+    api_token VARCHAR(64) NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE verification_codes (
+    email VARCHAR(191) PRIMARY KEY,
+    code VARCHAR(10) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE workouts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    level VARCHAR(80) NOT NULL,
+    equipment VARCHAR(120) NOT NULL,
+    focus VARCHAR(80) NOT NULL,
+    minutes INT UNSIGNED NOT NULL,
+    image VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    is_new TINYINT(1) NOT NULL DEFAULT 0,
+    sort_order INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE exercises (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    workout_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    reps INT UNSIGNED NULL,
+    seconds INT UNSIGNED NULL,
+    cue TEXT NOT NULL,
+    sort_order INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_exercise_workout FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE categories (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(80) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+CREATE TABLE category_workout (
+    category_id BIGINT UNSIGNED NOT NULL,
+    workout_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (category_id, workout_id),
+    CONSTRAINT fk_cw_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    CONSTRAINT fk_cw_workout FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE saved_workouts (
+    user_id BIGINT UNSIGNED NOT NULL,
+    workout_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, workout_id),
+    CONSTRAINT fk_saved_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_saved_workout FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE workout_history (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    workout_id BIGINT UNSIGNED NOT NULL,
+    duration_seconds INT UNSIGNED NOT NULL,
+    exercise_count INT UNSIGNED NOT NULL,
+    completed_at DATETIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_history_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_history_workout FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE,
+    INDEX idx_history_user_completed(user_id, completed_at)
+) ENGINE=InnoDB;

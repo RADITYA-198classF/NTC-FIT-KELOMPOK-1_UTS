@@ -22,7 +22,9 @@ class OptionPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.white,
-      shape: const StadiumBorder(side: BorderSide(color: AppColors.outline, width: 1)),
+      shape: const StadiumBorder(
+        side: BorderSide(color: AppColors.outline, width: 1),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,

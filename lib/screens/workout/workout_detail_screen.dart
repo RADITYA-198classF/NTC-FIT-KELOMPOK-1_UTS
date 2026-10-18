@@ -21,7 +21,8 @@ class WorkoutDetailScreen extends StatelessWidget {
   void _start(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => WorkoutSessionScreen(workout: workout),
+        builder: (BuildContext context) =>
+            WorkoutSessionScreen(workout: workout),
       ),
     );
   }
@@ -52,7 +53,10 @@ class WorkoutDetailScreen extends StatelessWidget {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: <Color>[AppColors.black40, Color(0x00000000)],
+                            colors: <Color>[
+                              AppColors.black40,
+                              Color(0x00000000),
+                            ],
                             stops: <double>[0.0, 0.4],
                           ),
                         ),
@@ -87,7 +91,10 @@ class WorkoutDetailScreen extends StatelessWidget {
                           children: <Widget>[
                             _InfoItem(label: 'Durasi', value: workout.duration),
                             _InfoItem(label: 'Level', value: workout.level),
-                            _InfoItem(label: 'Peralatan', value: workout.equipment),
+                            _InfoItem(
+                              label: 'Peralatan',
+                              value: workout.equipment,
+                            ),
                           ],
                         ),
                       ),
@@ -121,7 +128,10 @@ class WorkoutDetailScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '${workout.exercises.length} gerakan',
-                        style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       for (int i = 0; i < workout.exercises.length; i++)
@@ -153,13 +163,21 @@ class WorkoutDetailScreen extends StatelessWidget {
                       const Spacer(),
                       ValueListenableBuilder<Set<String>>(
                         valueListenable: session.savedIds,
-                        builder: (BuildContext context, Set<String> saved, Widget? _) {
-                          final bool isSaved = saved.contains(workout.id);
-                          return _RoundIconButton(
-                            icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
-                            onPressed: () => session.toggleSaved(workout.id),
-                          );
-                        },
+                        builder:
+                            (
+                              BuildContext context,
+                              Set<String> saved,
+                              Widget? _,
+                            ) {
+                              final bool isSaved = saved.contains(workout.id);
+                              return _RoundIconButton(
+                                icon: isSaved
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                                onPressed: () =>
+                                    session.toggleSaved(workout.id),
+                              );
+                            },
                       ),
                     ],
                   ),
@@ -188,7 +206,8 @@ class WorkoutDetailScreen extends StatelessWidget {
                       height: 48,
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const WorkoutVideoScreen(),
+                          builder: (BuildContext context) =>
+                              const WorkoutVideoScreen(),
                         ),
                       ),
                     ),
@@ -199,7 +218,9 @@ class WorkoutDetailScreen extends StatelessWidget {
                     child: PillButton(
                       label: 'Mulai Latihan',
                       height: 52,
-                      onPressed: workout.exercises.isEmpty ? null : () => _start(context),
+                      onPressed: workout.exercises.isEmpty
+                          ? null
+                          : () => _start(context),
                     ),
                   ),
                 ],
@@ -249,7 +270,13 @@ class _InfoItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             value,

@@ -23,9 +23,10 @@ class AppImage extends StatelessWidget {
       asset,
       fit: fit,
       alignment: alignment,
-      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-        return ColoredBox(color: fallbackColor);
-      },
+      errorBuilder:
+          (BuildContext context, Object error, StackTrace? stackTrace) {
+            return ColoredBox(color: fallbackColor);
+          },
     );
   }
 }

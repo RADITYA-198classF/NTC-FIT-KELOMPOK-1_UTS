@@ -16,7 +16,8 @@ class ProgramScreen extends StatelessWidget {
       child: ListView.separated(
         padding: const EdgeInsets.fromLTRB(20, 2, 20, 28),
         itemCount: dummyPrograms.length,
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 20),
+        separatorBuilder: (BuildContext context, int index) =>
+            const SizedBox(height: 20),
         itemBuilder: (BuildContext context, int index) {
           return _ProgramCard(program: dummyPrograms[index]);
         },
@@ -47,7 +48,10 @@ class _ProgramCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    AppImage(program.image, fallbackColor: const Color(0xFF555555)),
+                    AppImage(
+                      program.image,
+                      fallbackColor: const Color(0xFF555555),
+                    ),
                     const DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(

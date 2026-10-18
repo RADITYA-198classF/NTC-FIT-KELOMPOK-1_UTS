@@ -34,7 +34,11 @@ class _YourWorkoutPainter extends CustomPainter {
         paint.shader = const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[Color(0xFF3F7BFF), Color(0xFFB44DFF), Color(0xFFFF4D8D)],
+          colors: <Color>[
+            Color(0xFF3F7BFF),
+            Color(0xFFB44DFF),
+            Color(0xFFFF4D8D),
+          ],
         ).createShader(Rect.fromLTWH(0, 0, w, h));
         final Path path = Path()
           ..moveTo(w * 0.10, 0)
@@ -48,8 +52,14 @@ class _YourWorkoutPainter extends CustomPainter {
         break;
       case YourWorkoutIconKind.all:
         final double r = w * 0.34;
-        final Rect left = Rect.fromCircle(center: Offset(w * 0.36, h * 0.5), radius: r);
-        final Rect right = Rect.fromCircle(center: Offset(w * 0.64, h * 0.5), radius: r);
+        final Rect left = Rect.fromCircle(
+          center: Offset(w * 0.36, h * 0.5),
+          radius: r,
+        );
+        final Rect right = Rect.fromCircle(
+          center: Offset(w * 0.64, h * 0.5),
+          radius: r,
+        );
         paint.color = const Color(0xFF4BB8F2);
         canvas.drawOval(left, paint);
         paint.color = const Color(0xFFEC5877);
@@ -78,5 +88,6 @@ class _YourWorkoutPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _YourWorkoutPainter oldDelegate) => oldDelegate.kind != kind;
+  bool shouldRepaint(covariant _YourWorkoutPainter oldDelegate) =>
+      oldDelegate.kind != kind;
 }

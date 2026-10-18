@@ -10,11 +10,8 @@ import '../../widgets/workout_tile.dart';
 import '../../widgets/your_workout_icons.dart';
 import '../workout/workout_list_screen.dart';
 
-/// Halaman "Latihan" (layar 10-12): pencarian, Mode Hibrid, kategori, Latihan Anda.
-///
-/// Mengetuk latihan membuka detail latihan. Mengetuk kategori (HIIT, Kekuatan,
-/// Yoga, Siap untuk Gym, Pilates), "Lihat semua", atau "Semua latihan" membuka
-/// daftar latihan. Kolom cari memfilter latihan langsung di halaman ini.
+/// Tampilan latihan NTC Fit. Daftar latihan bersumber dari AppSession,
+/// yang memuat data REST API ketika proses onboarding selesai.
 class LatihanScreen extends StatefulWidget {
   const LatihanScreen({super.key, required this.onNavigate});
 
@@ -36,22 +33,20 @@ class _LatihanScreenState extends State<LatihanScreen> {
 
   bool get _isSearching => _query.trim().isNotEmpty;
 
-  bool _matches(Workout w) {
-    final String q = _query.trim().toLowerCase();
-    return w.title.toLowerCase().contains(q) ||
-        w.focus.toLowerCase().contains(q) ||
-        w.categories.any((String c) => c.toLowerCase().contains(q));
-  }
-
-  void _clearSearch() {
-    _search.clear();
-    setState(() => _query = '');
+  bool _matches(Workout workout) {
+    final String keyword = _query.trim().toLowerCase();
+    return workout.title.toLowerCase().contains(keyword) ||
+        workout.focus.toLowerCase().contains(keyword) ||
+        workout.categories.any(
+          (String category) => category.toLowerCase().contains(keyword),
+        );
   }
 
   void _openList({required String title, WorkoutCategory? category}) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => WorkoutListScreen(title: title, category: category),
+        builder: (BuildContext context) =>
+            WorkoutListScreen(title: title, category: category),
       ),
     );
   }
@@ -63,28 +58,24 @@ class _LatihanScreenState extends State<LatihanScreen> {
         height: 44,
         child: TextField(
           controller: _search,
-          onChanged: (String v) => setState(() => _query = v),
+          onChanged: (String text) => setState(() => _query = text),
           textInputAction: TextInputAction.search,
           textAlignVertical: TextAlignVertical.center,
           cursorColor: AppColors.black,
-          style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
           decoration: InputDecoration(
             filled: true,
             fillColor: AppColors.surface,
             hintText: 'Cari',
-            hintStyle: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
-            isDense: true,
-            prefixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            suffixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            prefixIcon: const Icon(Icons.search, size: 20, color: AppColors.textSecondary),
+            prefixIcon: const Icon(Icons.search, size: 20),
             suffixIcon: _isSearching
                 ? IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.close, size: 20, color: AppColors.textSecondary),
-                    onPressed: _clearSearch,
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      _search.clear();
+                      setState(() => _query = '');
+                    },
                   )
                 : null,
-            contentPadding: EdgeInsets.zero,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(22),
               borderSide: BorderSide.none,
@@ -95,7 +86,37 @@ class _LatihanScreenState extends State<LatihanScreen> {
     );
   }
 
-  List<Widget> _buildBrowse() {
+  List<Widget> _buildSearchResults(List<Workout> workouts) {
+    final List<Workout> results = workouts.where(_matches).toList();
+    return <Widget>[
+      const Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
+        child: Text('Hasil pencarian', style: AppTextStyles.sectionTitle),
+      ),
+      if (results.isEmpty)
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            'Tidak ada latihan yang cocok.',
+            style: AppTextStyles.emptyBody,
+          ),
+        )
+      else
+        for (final Workout workout in results)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: WorkoutTile(workout: workout),
+          ),
+    ];
+  }
+
+  List<Widget> _buildBrowse(List<Workout> workouts) {
+    final List<Workout> hybrid = workouts
+        .where(
+          (Workout workout) => <String>['w1', 'w2', 'w3'].contains(workout.id),
+        )
+        .toList();
+
     return <Widget>[
       const Padding(
         padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
@@ -104,7 +125,8 @@ class _LatihanScreenState extends State<LatihanScreen> {
       const Padding(
         padding: EdgeInsets.fromLTRB(20, 10, 20, 12),
         child: Text(
-          'Tema untuk bulan April ini adalah kelincahan. Untuk merayakan peluncuran Nike Free Metcon 7, kami menyajikan kombinasi HIIT dan pliometrik dinamis untuk meningkatkan detak jantung Anda dan mendorong kecepatan serta kekuatan Anda. Kencangkan tali sepatu, ayo kita mulai.',
+          'Kombinasi HIIT dan latihan kekuatan untuk meningkatkan '
+          'daya tahan, kecepatan, dan kekuatan.',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -113,42 +135,34 @@ class _LatihanScreenState extends State<LatihanScreen> {
           ),
         ),
       ),
-      for (final Workout w in dummyHybridWorkouts)
+      for (final Workout workout in hybrid)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: WorkoutTile(workout: w),
+          child: WorkoutTile(workout: workout),
         ),
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
         child: Align(
           alignment: Alignment.centerLeft,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => _openList(title: 'Semua latihan'),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 6),
-              child: Text(
-                'Lihat semua',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ),
+          child: TextButton(
+            onPressed: () => _openList(title: 'Semua latihan'),
+            child: const Text('Lihat semua'),
           ),
         ),
       ),
       const Padding(
         padding: EdgeInsets.fromLTRB(20, 28, 20, 16),
-        child: Text('Jelajahi menurut Kategori', style: AppTextStyles.sectionTitle),
+        child: Text(
+          'Jelajahi menurut Kategori',
+          style: AppTextStyles.sectionTitle,
+        ),
       ),
-      for (final WorkoutCategory c in dummyCategories)
+      for (final WorkoutCategory category in dummyCategories)
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
           child: CategoryCard(
-            category: c,
-            onTap: () => _openList(title: c.name, category: c),
+            category: category,
+            onTap: () => _openList(title: category.name, category: category),
           ),
         ),
       const Padding(
@@ -163,31 +177,30 @@ class _LatihanScreenState extends State<LatihanScreen> {
           children: <Widget>[
             ValueListenableBuilder<Set<String>>(
               valueListenable: session.savedIds,
-              builder: (BuildContext context, Set<String> saved, Widget? _) {
-                return _YourWorkoutCard(
-                  kind: YourWorkoutIconKind.saved,
-                  title: 'Disimpan',
-                  count: saved.length,
-                  onTap: () => widget.onNavigate(3),
-                );
-              },
+              builder:
+                  (BuildContext context, Set<String> saved, Widget? child) =>
+                      _YourWorkoutCard(
+                        kind: YourWorkoutIconKind.saved,
+                        title: 'Disimpan',
+                        count: saved.length,
+                        onTap: () => widget.onNavigate(3),
+                      ),
             ),
             _YourWorkoutCard(
               kind: YourWorkoutIconKind.all,
               title: 'Semua latihan',
-              count: dummyWorkouts.length,
+              count: workouts.length,
               onTap: () => _openList(title: 'Semua latihan'),
             ),
             ValueListenableBuilder<int>(
               valueListenable: session.completedCount,
-              builder: (BuildContext context, int done, Widget? _) {
-                return _YourWorkoutCard(
-                  kind: YourWorkoutIconKind.done,
-                  title: 'Selesai',
-                  count: done,
-                  onTap: () => widget.onNavigate(4),
-                );
-              },
+              builder: (BuildContext context, int completed, Widget? child) =>
+                  _YourWorkoutCard(
+                    kind: YourWorkoutIconKind.done,
+                    title: 'Selesai',
+                    count: completed,
+                    onTap: () => widget.onNavigate(4),
+                  ),
             ),
           ],
         ),
@@ -195,35 +208,20 @@ class _LatihanScreenState extends State<LatihanScreen> {
     ];
   }
 
-  List<Widget> _buildSearchResults() {
-    final List<Workout> results = dummyWorkouts.where(_matches).toList();
-    return <Widget>[
-      const Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
-        child: Text('Hasil pencarian', style: AppTextStyles.sectionTitle),
-      ),
-      if (results.isEmpty)
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-          child: Text('Tidak ada latihan yang cocok.', style: AppTextStyles.emptyBody),
-        )
-      else
-        for (final Workout w in results)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: WorkoutTile(workout: w),
-          ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
-      children: <Widget>[
-        _buildSearchField(),
-        ...(_isSearching ? _buildSearchResults() : _buildBrowse()),
-      ],
+    return ValueListenableBuilder<List<Workout>>(
+      valueListenable: session.workouts,
+      builder: (BuildContext context, List<Workout> workouts, Widget? child) =>
+          ListView(
+            padding: const EdgeInsets.only(bottom: 32),
+            children: <Widget>[
+              _buildSearchField(),
+              ...(_isSearching
+                  ? _buildSearchResults(workouts)
+                  : _buildBrowse(workouts)),
+            ],
+          ),
     );
   }
 }

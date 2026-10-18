@@ -7,18 +7,16 @@ import '../../widgets/browser_frame.dart';
 import '../../widgets/pill_button.dart';
 import '../../widgets/web_text_field.dart';
 
-/// Layar 3: "Masukkan email Anda untuk mendaftar atau masuk."
 class EmailScreen extends StatefulWidget {
   const EmailScreen({super.key});
-
   @override
   State<EmailScreen> createState() => _EmailScreenState();
 }
 
 class _EmailScreenState extends State<EmailScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _email = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  bool _loading = false;
   @override
   void dispose() {
     _email.dispose();
@@ -26,88 +24,90 @@ class _EmailScreenState extends State<EmailScreen> {
   }
 
   String? _validate(String? value) {
-    final String text = (value ?? '').trim();
-    final bool valid = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(text);
-    return valid ? null : 'Masukkan alamat email yang valid.';
+    final t = (value ?? '').trim();
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(t)
+        ? null
+        : 'Masukkan alamat email yang valid.';
   }
 
-  void _continue() {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    session.email = _email.text.trim();
-    // TODO(api): cek email ke backend. Email baru -> daftar, email lama -> masuk.
-    Navigator.of(context).pushNamed(AppRoutes.authRegister);
+  Future<void> _continue() async {
+    if (!(_formKey.currentState?.validate() ?? false) || _loading) return;
+    setState(() => _loading = true);
+    try {
+      final code = await session.requestVerificationCode(_email.text.trim());
+      if (!mounted) return;
+      if (code != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Kode demo UTS: $code')));
+      }
+      Navigator.of(context).pushNamed(AppRoutes.authRegister);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('API gagal: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BrowserFrame(
-      onClose: () => Navigator.of(context).maybePop(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(34, 30, 34, 24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const WebLogoRow(),
-              const SizedBox(height: 34),
-              const Text(
-                'Masukkan email Anda untuk mendaftar atau masuk.',
-                style: AppTextStyles.webHeading,
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: <Widget>[
-                  const Text('Indonesia', style: AppTextStyles.webBody),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Ubah',
-                      style: AppTextStyles.webMuted.copyWith(
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
+  Widget build(BuildContext context) => BrowserFrame(
+    onClose: () => Navigator.of(context).maybePop(),
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(34, 30, 34, 24),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const WebLogoRow(),
+            const SizedBox(height: 34),
+            const Text(
+              'Masukkan email Anda untuk mendaftar atau masuk.',
+              style: AppTextStyles.webHeading,
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: <Widget>[
+                const Text('Indonesia', style: AppTextStyles.webBody),
+                const SizedBox(width: 10),
+                Text(
+                  'Ubah',
+                  style: AppTextStyles.webMuted.copyWith(
+                    decoration: TextDecoration.underline,
                   ),
-                ],
-              ),
-              const SizedBox(height: 28),
-              WebTextField(
-                label: 'Email*',
-                controller: _email,
-                autofocus: true,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                validator: _validate,
-                onFieldSubmitted: (_) => _continue(),
-              ),
-              const SizedBox(height: 28),
-              const Text.rich(
-                TextSpan(
-                  style: AppTextStyles.webMuted,
-                  children: <InlineSpan>[
-                    TextSpan(text: 'Dengan melanjutkan, saya menyetujui '),
-                    TextSpan(text: 'Kebijakan Privasi', style: AppTextStyles.webLink),
-                    TextSpan(text: ' dan '),
-                    TextSpan(text: 'Ketentuan Penggunaan', style: AppTextStyles.webLink),
-                    TextSpan(text: ' Nike.'),
-                  ],
                 ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            WebTextField(
+              label: 'Email*',
+              controller: _email,
+              autofocus: true,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+              validator: _validate,
+              onFieldSubmitted: (_) => _continue(),
+            ),
+            const SizedBox(height: 28),
+            const Text(
+              'Untuk demo lokal, kode verifikasi diberikan oleh backend.',
+              style: AppTextStyles.webMuted,
+            ),
+            const SizedBox(height: 28),
+            Align(
+              alignment: Alignment.centerRight,
+              child: PillButton(
+                label: _loading ? 'Memuat...' : 'Lanjutkan',
+                height: 42,
+                horizontalPadding: 22,
+                onPressed: _loading ? null : _continue,
               ),
-              const SizedBox(height: 28),
-              Align(
-                alignment: Alignment.centerRight,
-                child: PillButton(
-                  label: 'Lanjutkan',
-                  height: 42,
-                  horizontalPadding: 22,
-                  onPressed: _continue,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }

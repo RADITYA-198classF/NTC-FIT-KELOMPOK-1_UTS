@@ -12,110 +12,144 @@ import '../../widgets/browser_frame.dart';
 import '../../widgets/pill_button.dart';
 import '../../widgets/web_text_field.dart';
 
-/// Layar 4: "Sekarang daftarkan diri Anda menjadi Anggota Nike."
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
-
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _code = TextEditingController();
-  final TextEditingController _first = TextEditingController();
-  final TextEditingController _last = TextEditingController();
-  final TextEditingController _day = TextEditingController();
-  final TextEditingController _month = TextEditingController();
-  final TextEditingController _year = TextEditingController();
-
-  bool _marketing = false;
-  bool _agree = false;
-  bool _agreeError = false;
+  final _formKey = GlobalKey<FormState>();
+  final _code = TextEditingController();
+  final _first = TextEditingController();
+  final _last = TextEditingController();
+  final _day = TextEditingController();
+  final _month = TextEditingController();
+  final _year = TextEditingController();
+  bool _marketing = false,
+      _agree = false,
+      _agreeError = false,
+      _loading = false;
   int _seconds = AppConfig.resendCodeSeconds;
   Timer? _timer;
-
+  bool get _loginMode => session.emailExists;
   @override
   void initState() {
     super.initState();
-    _seconds = AppConfig.resendCodeSeconds;
     _startTimer();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    _code.dispose();
-    _first.dispose();
-    _last.dispose();
-    _day.dispose();
-    _month.dispose();
-    _year.dispose();
+    for (final c in [_code, _first, _last, _day, _month, _year]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   void _startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       if (_seconds <= 1) {
-        timer.cancel();
+        t.cancel();
         setState(() => _seconds = 0);
       } else {
-        setState(() => _seconds -= 1);
+        setState(() => _seconds--);
       }
     });
   }
 
-  void _resendCode() {
+  Future<void> _resendCode() async {
     if (_seconds > 0) return;
-    // TODO(api): minta backend mengirim ulang kode verifikasi ke email.
-    setState(() => _seconds = AppConfig.resendCodeSeconds);
-    _startTimer();
+    try {
+      final code = await session.requestVerificationCode(session.email);
+      if (mounted) {
+        setState(() => _seconds = AppConfig.resendCodeSeconds);
+        _startTimer();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kode demo UTS: ${code ?? '-'}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('$e')));
+      }
+    }
   }
 
-  String? _required(String? value) {
-    return (value == null || value.trim().isEmpty) ? 'Wajib diisi' : null;
+  String? _required(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Wajib diisi' : null;
+  String? _range(String? v, int min, int max) {
+    final n = int.tryParse((v ?? '').trim());
+    return (n == null || n < min || n > max) ? 'Tidak valid' : null;
   }
 
-  String? _rangeValidator(String? value, int min, int max) {
-    final int? n = int.tryParse((value ?? '').trim());
-    if (n == null || n < min || n > max) return 'Tidak valid';
-    return null;
-  }
-
-  void _submit() {
-    final bool formOk = _formKey.currentState?.validate() ?? false;
+  Future<void> _submit() async {
+    if (_loading) return;
+    if (_loginMode) {
+      if (_code.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Masukkan kode verifikasi.')),
+        );
+        return;
+      }
+      setState(() => _loading = true);
+      try {
+        await session.login(_code.text.trim());
+        if (mounted) Navigator.of(context).pushNamed(AppRoutes.authSuccess);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('$e')));
+        }
+      } finally {
+        if (mounted) setState(() => _loading = false);
+      }
+      return;
+    }
+    final formOk = _formKey.currentState?.validate() ?? false;
     setState(() => _agreeError = !_agree);
     if (!formOk || !_agree) return;
-
-    final int day = int.parse(_day.text.trim());
-    final int month = int.parse(_month.text.trim());
-    final int year = int.parse(_year.text.trim());
-    final DateTime birth = DateTime(year, month, day);
-    if (birth.day != day || birth.month != month) {
-      // Tanggal tidak ada di kalender (mis. 31 Februari).
-      _formKey.currentState?.validate();
+    final d = int.parse(_day.text),
+        m = int.parse(_month.text),
+        y = int.parse(_year.text);
+    final birth = DateTime(y, m, d);
+    if (birth.day != d || birth.month != m) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Tanggal lahir tidak valid.')),
       );
       return;
     }
-
-    session.firstName = _first.text.trim();
-    session.lastName = _last.text.trim();
-    session.birthDate = birth;
-    session.marketingOptIn = _marketing;
-    session.joinedAt = DateTime.now();
-    // TODO(api): kirim kode + data pendaftaran ke backend, tampilkan error jika gagal.
-    Navigator.of(context).pushNamed(AppRoutes.authSuccess);
+    setState(() => _loading = true);
+    try {
+      await session.register(
+        code: _code.text.trim(),
+        firstNameValue: _first.text.trim(),
+        lastNameValue: _last.text.trim(),
+        birth: birth,
+        marketing: _marketing,
+      );
+      if (mounted) Navigator.of(context).pushNamed(AppRoutes.authSuccess);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('$e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool canResend = _seconds == 0;
+    final canResend = _seconds == 0;
     return BrowserFrame(
-      onClose: () => Navigator.of(context).popUntil((Route<dynamic> r) => r.settings.name == AppRoutes.welcome),
+      onClose: () =>
+          Navigator.of(context)
+              .popUntil((r) => r.settings.name == AppRoutes.welcome),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(34, 30, 34, 28),
         child: Form(
@@ -125,32 +159,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: <Widget>[
               const WebLogoRow(),
               const SizedBox(height: 30),
-              const Text(
-                'Sekarang daftarkan diri Anda menjadi Anggota Nike.',
+              Text(
+                _loginMode
+                    ? 'Masukkan kode untuk masuk ke NTC Fit.'
+                    : 'Sekarang daftarkan diri Anda menjadi Anggota NTC Fit.',
                 style: AppTextStyles.webHeading,
               ),
               const SizedBox(height: 14),
-              Text.rich(
-                TextSpan(
-                  style: AppTextStyles.webBody,
-                  children: <InlineSpan>[
-                    const TextSpan(text: 'Kami telah mengirimkan kode ke\n'),
-                    TextSpan(text: '${session.email} '),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.baseline,
-                      baseline: TextBaseline.alphabetic,
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).maybePop(),
-                        child: Text(
-                          'Edit',
-                          style: AppTextStyles.webMuted.copyWith(
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              Text(
+                'Kode telah dibuat untuk ${session.email}.',
+                style: AppTextStyles.webBody,
               ),
               const SizedBox(height: 22),
               WebTextField(
@@ -159,17 +177,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 maxLength: 8,
-                inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 validator: _required,
                 suffixIcon: IconButton(
                   icon: Icon(
                     Icons.sync,
-                    color: canResend ? AppColors.textPrimary : AppColors.iconInactive,
+                    color: canResend
+                        ? AppColors.textPrimary
+                        : AppColors.iconInactive,
                   ),
                   onPressed: canResend ? _resendCode : null,
                 ),
               ),
-              const SizedBox(height: 6),
               Align(
                 alignment: Alignment.centerRight,
                 child: canResend
@@ -187,127 +208,108 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: AppTextStyles.webHelper,
                       ),
               ),
-              const SizedBox(height: 12),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: WebTextField(
-                      label: 'Nama Depan*',
-                      controller: _first,
-                      textInputAction: TextInputAction.next,
-                      validator: _required,
+              if (!_loginMode) ...<Widget>[
+                const SizedBox(height: 16),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: WebTextField(
+                        label: 'Nama Depan*',
+                        controller: _first,
+                        validator: _required,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: WebTextField(
-                      label: 'Nama Belakang*',
-                      controller: _last,
-                      textInputAction: TextInputAction.next,
-                      validator: _required,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: WebTextField(
+                        label: 'Nama Belakang*',
+                        controller: _last,
+                        validator: _required,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 22),
-              const Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Text(
+                  ],
+                ),
+                const SizedBox(height: 22),
+                const Text(
                   'Tanggal Lahir',
                   style: TextStyle(fontSize: 15, color: AppColors.textPrimary),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: WebTextField(
-                      label: 'Hari*',
-                      controller: _day,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      maxLength: 2,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                      validator: (String? v) => _rangeValidator(v, 1, 31),
+                const SizedBox(height: 8),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: WebTextField(
+                        label: 'Hari*',
+                        controller: _day,
+                        keyboardType: TextInputType.number,
+                        maxLength: 2,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (v) => _range(v, 1, 31),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
-                    child: WebTextField(
-                      label: 'Bulan*',
-                      controller: _month,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      maxLength: 2,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                      validator: (String? v) => _rangeValidator(v, 1, 12),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: WebTextField(
+                        label: 'Bulan*',
+                        controller: _month,
+                        keyboardType: TextInputType.number,
+                        maxLength: 2,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (v) => _range(v, 1, 12),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 3,
-                    child: WebTextField(
-                      label: 'Tahun*',
-                      controller: _year,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      maxLength: 4,
-                      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                      validator: (String? v) => _rangeValidator(v, 1900, DateTime.now().year),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: WebTextField(
+                        label: 'Tahun*',
+                        controller: _year,
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (v) => _range(v, 1900, DateTime.now().year),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              const Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Text(
-                  'Dapatkan Hadiah Anggota Nike pada hari ulang tahun Anda.',
-                  style: AppTextStyles.webHelper,
+                  ],
                 ),
-              ),
-              const SizedBox(height: 26),
-              _CheckRow(
-                value: _marketing,
-                onChanged: (bool v) => setState(() => _marketing = v),
-                child: const Text(
-                  'Mendaftarlah untuk menerima email berisi info terbaru dari Nike tentang produk, penawaran, dan manfaat Anggota.',
-                  style: AppTextStyles.webBody,
-                ),
-              ),
-              const SizedBox(height: 18),
-              _CheckRow(
-                value: _agree,
-                hasError: _agreeError,
-                onChanged: (bool v) => setState(() {
-                  _agree = v;
-                  _agreeError = false;
-                }),
-                child: const Text.rich(
-                  TextSpan(
+                const SizedBox(height: 20),
+                _CheckRow(
+                  value: _marketing,
+                  onChanged: (v) => setState(() => _marketing = v),
+                  child: const Text(
+                    'Terima email informasi terbaru dan manfaat anggota.',
                     style: AppTextStyles.webBody,
-                    children: <InlineSpan>[
-                      TextSpan(text: 'Saya menyetujui '),
-                      TextSpan(text: 'Kebijakan Privasi', style: AppTextStyles.webLink),
-                      TextSpan(text: ' dan '),
-                      TextSpan(text: 'Ketentuan Penggunaan', style: AppTextStyles.webLink),
-                      TextSpan(text: ' Nike.'),
-                    ],
                   ),
                 ),
-              ),
+                const SizedBox(height: 14),
+                _CheckRow(
+                  value: _agree,
+                  hasError: _agreeError,
+                  onChanged: (v) => setState(() {
+                    _agree = v;
+                    _agreeError = false;
+                  }),
+                  child: const Text(
+                    'Saya menyetujui Kebijakan Privasi dan Ketentuan Penggunaan.',
+                    style: AppTextStyles.webBody,
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
               Align(
                 alignment: Alignment.centerRight,
                 child: PillButton(
-                  label: 'Buat Akun',
+                  label: _loading
+                      ? 'Memproses...'
+                      : (_loginMode ? 'Masuk' : 'Buat Akun'),
                   height: 42,
                   horizontalPadding: 22,
-                  onPressed: _submit,
+                  onPressed: _loading ? null : _submit,
                 ),
               ),
             ],
@@ -325,41 +327,36 @@ class _CheckRow extends StatelessWidget {
     required this.child,
     this.hasError = false,
   });
-
-  final bool value;
+  final bool value, hasError;
   final ValueChanged<bool> onChanged;
   final Widget child;
-  final bool hasError;
-
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        GestureDetector(
-          onTap: () => onChanged(!value),
-          child: Container(
-            width: 22,
-            height: 22,
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: value ? AppColors.black : AppColors.white,
-              borderRadius: BorderRadius.circular(3),
-              border: Border.all(
-                color: hasError
-                    ? AppColors.error
-                    : (value ? AppColors.black : AppColors.webBorder),
-                width: 1.5,
-              ),
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      GestureDetector(
+        onTap: () => onChanged(!value),
+        child: Container(
+          width: 22,
+          height: 22,
+          margin: const EdgeInsets.only(top: 2),
+          decoration: BoxDecoration(
+            color: value ? AppColors.black : AppColors.white,
+            borderRadius: BorderRadius.circular(3),
+            border: Border.all(
+              color: hasError
+                  ? AppColors.error
+                  : (value ? AppColors.black : AppColors.webBorder),
+              width: 1.5,
             ),
-            child: value
-                ? const Icon(Icons.check, size: 16, color: AppColors.white)
-                : null,
           ),
+          child: value
+              ? const Icon(Icons.check, size: 16, color: AppColors.white)
+              : null,
         ),
-        const SizedBox(width: 14),
-        Expanded(child: child),
-      ],
-    );
-  }
+      ),
+      const SizedBox(width: 14),
+      Expanded(child: child),
+    ],
+  );
 }

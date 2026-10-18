@@ -52,12 +52,21 @@ class WebTextField extends StatelessWidget {
       style: const TextStyle(fontSize: 16, color: AppColors.textPrimary),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 16, color: AppColors.textSecondary),
-        floatingLabelStyle: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
+        labelStyle: const TextStyle(
+          fontSize: 16,
+          color: AppColors.textSecondary,
+        ),
+        floatingLabelStyle: const TextStyle(
+          fontSize: 13,
+          color: AppColors.textPrimary,
+        ),
         counterText: '',
         isDense: true,
         suffixIcon: suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 16,
+        ),
         enabledBorder: _border(AppColors.webBorder, 1),
         focusedBorder: _border(AppColors.black, 1.5),
         errorBorder: _border(AppColors.error, 1),

@@ -44,7 +44,10 @@ class _RumahScreenState extends State<RumahScreen> {
               itemCount: dummyHeroSlides.length,
               onPageChanged: (int i) => setState(() => _page = i),
               itemBuilder: (BuildContext context, int index) {
-                return _HeroSlideView(slide: dummyHeroSlides[index], onExplore: _goToLatihan);
+                return _HeroSlideView(
+                  slide: dummyHeroSlides[index],
+                  onExplore: _goToLatihan,
+                );
               },
             ),
           ),

@@ -1,0 +1,18 @@
+{
+  "info": {
+    "name": "NTC Fit UTS API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://127.0.0.1:8000/api"},
+    {"key": "token", "value": ""}
+  ],
+  "item": [
+    {"name": "Health", "request": {"method": "GET", "url": "{{baseUrl}}/health"}},
+    {"name": "Request Code", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw":"{\n  \"email\": \"demo@ntcfit.test\"\n}"}, "url": "{{baseUrl}}/auth/request-code"}},
+    {"name": "Register", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw":"{\n  \"email\": \"demo@ntcfit.test\",\n  \"code\": \"123456\",\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\",\n  \"birth_date\": \"2004-01-01\",\n  \"marketing_opt_in\": false\n}"}, "url": "{{baseUrl}}/auth/register"}},
+    {"name": "Workouts", "request": {"method": "GET", "url": "{{baseUrl}}/workouts"}},
+    {"name": "Saved", "request": {"method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/saved"}},
+    {"name": "History", "request": {"method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/history"}}
+  ]
+}

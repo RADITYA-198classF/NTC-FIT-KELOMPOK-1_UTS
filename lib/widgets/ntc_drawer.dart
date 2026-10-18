@@ -46,7 +46,11 @@ class NtcDrawer extends StatelessWidget {
                     const CircleAvatar(
                       radius: 29,
                       backgroundColor: Color(0xFFE6E6E6),
-                      child: Icon(Icons.person, size: 46, color: Color(0xFFBDBDBD)),
+                      child: Icon(
+                        Icons.person,
+                        size: 46,
+                        color: Color(0xFFBDBDBD),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -110,7 +114,9 @@ class _DrawerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = selected ? AppColors.textPrimary : AppColors.iconInactive;
+    final Color color = selected
+        ? AppColors.textPrimary
+        : AppColors.iconInactive;
     return Material(
       color: selected ? AppColors.surface : Colors.transparent,
       child: InkWell(
