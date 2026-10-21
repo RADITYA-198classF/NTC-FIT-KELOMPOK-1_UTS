@@ -248,3 +248,11 @@ Beberapa layar tidak ada di 22 screenshot referensi sehingga dirancang mengikuti
 - Font asli Nike tidak disertakan. Teks isi memakai font bawaan Android. Judul kondensed memakai keluarga `NTCDisplay`; untuk tampilan lebih mirip, daftarkan font bebas lisensi seperti Anton (lihat `pubspec_snippet.yaml`).
 - Jangan mengunggah folder `.dart_tool/` dan `build/` ke repositori atau ke berkas ZIP pengumpulan; keduanya sudah masuk `.gitignore`.
 
+## Anggota Kelompok
+
+| No. | Nama | NIM |
+|:---:|---|:---:|
+| 1 | Raditya Ardi Prahasta | 24051214198 |
+| 2 | Akhmad Nurillah  | 24051214187 |
+| 3 | Muhamad Safa Al Kafi | 24051214191 |
+| 4 | Aurora Pricilia Radianto Putri | 24051214186 |
